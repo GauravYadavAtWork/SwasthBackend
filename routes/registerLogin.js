@@ -10,14 +10,13 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(`${process.env.DATABASELINK}Swasth`,{
+mongoose.connect(process.env.DATABASELINK,{
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
 });
 mongoose.connection.on('connected', () => {
     console.log('Connected to the swasth database');
 });
-
 
 
 const usersSchema = new mongoose.Schema({
@@ -36,7 +35,7 @@ router.post("/register", (req, res) => {
     const lastName = req.body.LastName;
     const role = req.body.Role;
     const Password =req.body.Password;
-
+    console.log(req.body);
     const newUser = new user({
         _id: mobileNumber,
         role: role,
@@ -65,6 +64,7 @@ router.post("/register", (req, res) => {
 router.post("/login",(req,res)=>{
     const mobileNumber = req.body.mobileNumber;
     const password = req.body.Password;
+    console.log(req.body);
     user.findOne({_id : mobileNumber})
     .then(details=>{
         // console.log(details.Password);
