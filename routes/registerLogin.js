@@ -10,13 +10,14 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(`mongodb+srv://${process.env.DATABASEID}:${process.env.DATABASEPASSWORD}@cluster0.o0hdixo.mongodb.net/Swasth`,{
+mongoose.connect(`${process.env.DATABASELINK}Swasth`,{
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
 });
 mongoose.connection.on('connected', () => {
     console.log('Connected to the swasth database');
 });
+
 
 
 const usersSchema = new mongoose.Schema({
@@ -47,15 +48,15 @@ router.post("/register", (req, res) => {
     newUser.save()
         .then(() => {
             console.log("New user Added with _id " + mobileNumber);
-            res.status(200).send("User registered successfully");
+            res.status(200).json({message : "User registered successfully" });
         })
         .catch((error) => {
             if (error.code === 11000) {
                 console.log("User Already Exists");
-                res.status(400).send("User already exists");
+                res.status(400).json({message : "User Already Exists" , err : error});
             } else {
                 console.error(error);
-                res.status(500).send("Internal Server Error");
+                res.status(500).json({message : "Internal Server Error" , err : error});
             }
         });
 });
@@ -66,16 +67,16 @@ router.post("/login",(req,res)=>{
     const password = req.body.Password;
     user.findOne({_id : mobileNumber})
     .then(details=>{
-        console.log(details.Password);
-        console.log(details);
+        // console.log(details.Password);
+        // console.log(details);
         if(details.Password===password){
-            res.send("Authorized User");
+            res.json({message : "Authorized User" });
         }else{
-            res.send("Invalid Password");
+            res.json({message : "Invalid Password" });
         }
     })
-    .catch(err=>{
-        res.send(err);
+    .catch(error=>{
+        res.json({err : error});
     })
 });
 
